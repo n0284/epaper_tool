@@ -7,16 +7,59 @@ from to_bin import convert_to_bin  # 既存
 TARGET_W = 240
 TARGET_H = 416
 
-palette = np.array([
+# パレット（float32のままでOK）
+PAL_BW = np.array([
+    [0, 0, 0],
+    [255, 255, 255],
+], dtype=np.float32)
+
+PAL_FULL = np.array([
     [0, 0, 0],
     [255, 255, 255],
     [255, 0, 0],
-    [255, 255, 0]
+    [255, 255, 0],
 ], dtype=np.float32)
 
-def nearest_color(pixel):
-    distances = np.sum((palette - pixel) ** 2, axis=1)
-    return palette[np.argmin(distances)]
+
+def nearest_from_palette(pixel: np.ndarray, pal: np.ndarray) -> np.ndarray:
+    # pixel: shape (3,)
+    # pal: shape (N,3)
+    d = np.sum((pal - pixel) ** 2, axis=1)
+    return pal[np.argmin(d)]
+
+
+def is_colorful(pixel: np.ndarray, sat_threshold: float = 45.0) -> bool:
+    """
+    彩度っぽい指標（max-min）で、色が強い領域だけ赤/黄を許可する。
+    人物（肌）は彩度が低めなので、赤/黄の汚れが減る。
+    """
+    r, g, b = float(pixel[0]), float(pixel[1]), float(pixel[2])
+    return (max(r, g, b) - min(r, g, b)) >= sat_threshold
+
+
+def quantize_pixel(pixel: np.ndarray) -> np.ndarray:
+    # 彩度が低い（=肌・グレー・背景など）は白黒のみで量子化
+    if is_colorful(pixel, sat_threshold=45.0):
+        return nearest_from_palette(pixel, PAL_FULL)
+    else:
+        return nearest_from_palette(pixel, PAL_BW)
+
+
+def atkinson_diffuse(data: np.ndarray, x: int, y: int, err: np.ndarray) -> None:
+    """
+    Atkinson dithering:
+          x  1  1
+       1  1  1
+          1
+    すべて 1/8。粒が柔らかく人物向き。
+    """
+    h, w, _ = data.shape
+    wgt = 1.0 / 8.0
+    for dx, dy in [(1, 0), (2, 0), (-1, 1), (0, 1), (1, 1), (0, 2)]:
+        nx, ny = x + dx, y + dy
+        if 0 <= nx < w and 0 <= ny < h:
+            data[ny, nx] += err * wgt
+
 
 def convert_to_epd_bin(input_image: Path, output_bin: Path) -> None:
     input_image = Path(input_image)
@@ -40,34 +83,31 @@ def convert_to_epd_bin(input_image: Path, output_bin: Path) -> None:
     y_offset = (TARGET_H - img.height) // 2
     canvas.paste(img, (x_offset, y_offset))
 
+    # float32で誤差拡散
     data = np.array(canvas, dtype=np.float32)
     height, width, _ = data.shape
 
-    # 4色ディザリング
+    # Atkinson 4色ディザリング（人物向け）
     for y in range(height):
         for x in range(width):
             old_pixel = data[y, x].copy()
-            new_pixel = nearest_color(old_pixel)
+
+            # 重要：拡散で値がはみ出してるので、量子化前にクリップして安定化
+            old_pixel = np.clip(old_pixel, 0, 255)
+
+            new_pixel = quantize_pixel(old_pixel)
             data[y, x] = new_pixel
-            error = old_pixel - new_pixel
 
-            if x + 1 < width:
-                data[y, x + 1] += error * 7 / 16
-            if y + 1 < height and x - 1 >= 0:
-                data[y + 1, x - 1] += error * 3 / 16
-            if y + 1 < height:
-                data[y + 1, x] += error * 5 / 16
-            if y + 1 < height and x + 1 < width:
-                data[y + 1, x + 1] += error * 1 / 16
+            err = old_pixel - new_pixel
+            atkinson_diffuse(data, x, y, err)
 
-    data = np.clip(data, 0, 255)
+    data = np.clip(data, 0, 255).astype("uint8")
 
     # 中間PNGは一時ファイルにする（bin生成後に削除）
     tmp_png = output_bin.parent / "._tmp_color_dither_fixed.png"
-    out = Image.fromarray(data.astype("uint8"))
-    out.save(tmp_png)
+    Image.fromarray(data).save(tmp_png)
 
-    # bin生成（出力先は固定名でもOK：image.bin）
+    # bin生成
     output_bin.parent.mkdir(parents=True, exist_ok=True)
     convert_to_bin(str(tmp_png), str(output_bin))
 

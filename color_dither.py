@@ -26,6 +26,12 @@ PAL_FULL = np.array([
     [255, 255, 0],
 ], dtype=np.float32)
 
+PAL_BW_R = np.array([
+    [0, 0, 0],
+    [255, 255, 255],
+    [255, 0, 0],
+], dtype=np.float32)
+
 
 def nearest_from_palette(pixel: np.ndarray, pal: np.ndarray) -> np.ndarray:
     # pixel: shape (3,)
@@ -52,15 +58,14 @@ def looks_like_skin(pixel):
     warm = (r > 70 and g > 55 and b < 170 and (r-g) < 90)
     return bright > 55 and warm
 
-def quantize_pixel(pixel, sat_threshold=42):
+def quantize_pixel(pixel, sat_threshold=42, red_diff=16):
     if is_colorful(pixel, sat_threshold):
-        if allow_red(pixel, diff=20):
-            return nearest_from_palette(pixel, PAL_FULL)   # 赤も許可
+        if allow_red(pixel, diff=red_diff):
+            # 赤を狙うなら黄を混ぜない（赤が黄に負けるのを防ぐ）
+            return nearest_from_palette(pixel, PAL_BW_R)
         else:
-            # 彩度はあるが赤ではない→黄だけ許可したい場面が多い
             return nearest_from_palette(pixel, PAL_BW_Y)
     else:
-        # 彩度低いけど肌っぽい→黄を許可
         if looks_like_skin(pixel):
             return nearest_from_palette(pixel, PAL_BW_Y)
         return nearest_from_palette(pixel, PAL_BW)

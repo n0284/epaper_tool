@@ -13,6 +13,12 @@ PAL_BW = np.array([
     [255, 255, 255],
 ], dtype=np.float32)
 
+PAL_BW_Y = np.array([
+    [0,0,0],
+    [255,255,255],
+    [255,255,0]
+], dtype=np.float32)
+
 PAL_FULL = np.array([
     [0, 0, 0],
     [255, 255, 255],
@@ -36,12 +42,27 @@ def is_colorful(pixel: np.ndarray, sat_threshold: float = 45.0) -> bool:
     r, g, b = float(pixel[0]), float(pixel[1]), float(pixel[2])
     return (max(r, g, b) - min(r, g, b)) >= sat_threshold
 
+def allow_red(pixel, diff=16):
+    r,g,b = pixel
+    return (r - max(g,b)) >= diff
 
-def quantize_pixel(pixel: np.ndarray) -> np.ndarray:
-    # 彩度が低い（=肌・グレー・背景など）は白黒のみで量子化
-    if is_colorful(pixel, sat_threshold=45.0):
-        return nearest_from_palette(pixel, PAL_FULL)
+def looks_like_skin(pixel):
+    r,g,b = pixel
+    bright = (r+g+b)/3
+    warm = (r > 70 and g > 55 and b < 170 and (r-g) < 90)
+    return bright > 55 and warm
+
+def quantize_pixel(pixel, sat_threshold=42):
+    if is_colorful(pixel, sat_threshold):
+        if allow_red(pixel, diff=20):
+            return nearest_from_palette(pixel, PAL_FULL)   # 赤も許可
+        else:
+            # 彩度はあるが赤ではない→黄だけ許可したい場面が多い
+            return nearest_from_palette(pixel, PAL_BW_Y)
     else:
+        # 彩度低いけど肌っぽい→黄を許可
+        if looks_like_skin(pixel):
+            return nearest_from_palette(pixel, PAL_BW_Y)
         return nearest_from_palette(pixel, PAL_BW)
 
 

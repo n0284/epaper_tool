@@ -112,13 +112,13 @@ def convert_to_epd_bin(input_image: Path, output_bin: Path) -> None:
 
     # --- 前処理：軽いオートコントラスト + ほんの少しシャープ ---
     # cutoff: 黒点/白点の両端を何%捨てるか。小さめが安全（0.5〜2）
-    canvas = ImageOps.autocontrast(canvas, cutoff=1)
+    canvas = ImageOps.autocontrast(canvas, cutoff=1.5)
 
     # シャープはやりすぎると粒が硬くなるので 1.1〜1.3 くらいが無難
-    canvas = ImageEnhance.Sharpness(canvas).enhance(1.2)
+    canvas = ImageEnhance.Sharpness(canvas).enhance(1.3)
 
     # （任意）ほんの少しだけコントラストを上げたい場合
-    # canvas = ImageEnhance.Contrast(canvas).enhance(1.05)
+    canvas = ImageEnhance.Contrast(canvas).enhance(1.05)
 
     # float32で誤差拡散
     data = np.array(canvas, dtype=np.float32)

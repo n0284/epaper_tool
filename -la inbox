@@ -1,0 +1,51 @@
+-- Logs begin at Wed 2025-07-09 13:52:09 JST, end at Sun 2026-02-15 00:58:20 JST. --
+ 2月 15 00:55:47 tima-desktop uvicorn[18797]: ERROR:    Exception in ASGI application
+ 2月 15 00:55:47 tima-desktop uvicorn[18797]: Traceback (most recent call last):
+ 2月 15 00:55:47 tima-desktop uvicorn[18797]:   File "/home/tima/dev/epaper_tool/.venv/lib/python3.10/site-packages/uvicorn/protocols/http/httptools_impl.py", line 416, in run_asgi
+ 2月 15 00:55:47 tima-desktop uvicorn[18797]:     result = await app(  # type: ignore[func-returns-value]
+ 2月 15 00:55:47 tima-desktop uvicorn[18797]:   File "/home/tima/dev/epaper_tool/.venv/lib/python3.10/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+ 2月 15 00:55:47 tima-desktop uvicorn[18797]:     return await self.app(scope, receive, send)
+ 2月 15 00:55:47 tima-desktop uvicorn[18797]:   File "/home/tima/dev/epaper_tool/.venv/lib/python3.10/site-packages/fastapi/applications.py", line 1134, in __call__
+ 2月 15 00:55:47 tima-desktop uvicorn[18797]:     await super().__call__(scope, receive, send)
+ 2月 15 00:55:47 tima-desktop uvicorn[18797]:   File "/home/tima/dev/epaper_tool/.venv/lib/python3.10/site-packages/starlette/applications.py", line 107, in __call__
+ 2月 15 00:55:47 tima-desktop uvicorn[18797]:     await self.middleware_stack(scope, receive, send)
+ 2月 15 00:55:47 tima-desktop uvicorn[18797]:   File "/home/tima/dev/epaper_tool/.venv/lib/python3.10/site-packages/starlette/middleware/errors.py", line 186, in __call__
+ 2月 15 00:55:47 tima-desktop uvicorn[18797]:     raise exc
+ 2月 15 00:55:47 tima-desktop uvicorn[18797]:   File "/home/tima/dev/epaper_tool/.venv/lib/python3.10/site-packages/starlette/middleware/errors.py", line 164, in __call__
+ 2月 15 00:55:47 tima-desktop uvicorn[18797]:     await self.app(scope, receive, _send)
+ 2月 15 00:55:47 tima-desktop uvicorn[18797]:   File "/home/tima/dev/epaper_tool/.venv/lib/python3.10/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+ 2月 15 00:55:47 tima-desktop uvicorn[18797]:     await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+ 2月 15 00:55:47 tima-desktop uvicorn[18797]:   File "/home/tima/dev/epaper_tool/.venv/lib/python3.10/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+ 2月 15 00:55:47 tima-desktop uvicorn[18797]:     raise exc
+ 2月 15 00:55:47 tima-desktop uvicorn[18797]:   File "/home/tima/dev/epaper_tool/.venv/lib/python3.10/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+ 2月 15 00:55:47 tima-desktop uvicorn[18797]:     await app(scope, receive, sender)
+ 2月 15 00:55:47 tima-desktop uvicorn[18797]:   File "/home/tima/dev/epaper_tool/.venv/lib/python3.10/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+ 2月 15 00:55:47 tima-desktop uvicorn[18797]:     await self.app(scope, receive, send)
+ 2月 15 00:55:47 tima-desktop uvicorn[18797]:   File "/home/tima/dev/epaper_tool/.venv/lib/python3.10/site-packages/starlette/routing.py", line 716, in __call__
+ 2月 15 00:55:47 tima-desktop uvicorn[18797]:     await self.middleware_stack(scope, receive, send)
+ 2月 15 00:55:47 tima-desktop uvicorn[18797]:   File "/home/tima/dev/epaper_tool/.venv/lib/python3.10/site-packages/starlette/routing.py", line 736, in app
+ 2月 15 00:55:47 tima-desktop uvicorn[18797]:     await route.handle(scope, receive, send)
+ 2月 15 00:55:47 tima-desktop uvicorn[18797]:   File "/home/tima/dev/epaper_tool/.venv/lib/python3.10/site-packages/starlette/routing.py", line 290, in handle
+ 2月 15 00:55:47 tima-desktop uvicorn[18797]:     await self.app(scope, receive, send)
+ 2月 15 00:55:47 tima-desktop uvicorn[18797]:   File "/home/tima/dev/epaper_tool/.venv/lib/python3.10/site-packages/fastapi/routing.py", line 119, in app
+ 2月 15 00:55:47 tima-desktop uvicorn[18797]:     await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+ 2月 15 00:55:47 tima-desktop uvicorn[18797]:   File "/home/tima/dev/epaper_tool/.venv/lib/python3.10/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+ 2月 15 00:55:47 tima-desktop uvicorn[18797]:     raise exc
+ 2月 15 00:55:47 tima-desktop uvicorn[18797]:   File "/home/tima/dev/epaper_tool/.venv/lib/python3.10/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+ 2月 15 00:55:47 tima-desktop uvicorn[18797]:     await app(scope, receive, sender)
+ 2月 15 00:55:47 tima-desktop uvicorn[18797]:   File "/home/tima/dev/epaper_tool/.venv/lib/python3.10/site-packages/fastapi/routing.py", line 105, in app
+ 2月 15 00:55:47 tima-desktop uvicorn[18797]:     response = await f(request)
+ 2月 15 00:55:47 tima-desktop uvicorn[18797]:   File "/home/tima/dev/epaper_tool/.venv/lib/python3.10/site-packages/fastapi/routing.py", line 424, in app
+ 2月 15 00:55:47 tima-desktop uvicorn[18797]:     raw_response = await run_endpoint_function(
+ 2月 15 00:55:47 tima-desktop uvicorn[18797]:   File "/home/tima/dev/epaper_tool/.venv/lib/python3.10/site-packages/fastapi/routing.py", line 312, in run_endpoint_function
+ 2月 15 00:55:47 tima-desktop uvicorn[18797]:     return await dependant.call(**values)
+ 2月 15 00:55:47 tima-desktop uvicorn[18797]:   File "/home/tima/dev/epaper_tool/server.py", line 49, in upload_image
+ 2月 15 00:55:47 tima-desktop uvicorn[18797]:     tmp_bin = OUT_DIR / f".{BIN_NAME}.{ts}.tmp"
+ 2月 15 00:55:47 tima-desktop uvicorn[18797]: NameError: name 'ts' is not defined
+ 2月 15 00:56:00 tima-desktop uvicorn[18797]: INFO:     192.168.0.20:65463 - "GET /image.bin HTTP/1.1" 200 OK
+ 2月 15 00:57:17 tima-desktop uvicorn[18797]: WARNING:  Invalid HTTP request received.
+ 2月 15 00:57:17 tima-desktop uvicorn[18797]: WARNING:  Invalid HTTP request received.
+ 2月 15 00:57:17 tima-desktop uvicorn[18797]: WARNING:  Invalid HTTP request received.
+ 2月 15 00:57:17 tima-desktop uvicorn[18797]: WARNING:  Invalid HTTP request received.
+ 2月 15 00:57:17 tima-desktop uvicorn[18797]: INFO:     100.79.112.1:55400 - "GET /health HTTP/1.1" 200 OK
+ 2月 15 00:57:18 tima-desktop uvicorn[18797]: INFO:     100.79.112.1:55399 - "GET /favicon.ico HTTP/1.1" 404 Not Found

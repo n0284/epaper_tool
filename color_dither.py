@@ -115,7 +115,7 @@ def convert_to_epd_bin(input_image: Path, output_bin: Path) -> None:
     canvas = ImageOps.autocontrast(canvas, cutoff=0.5)
 
     # 彩度を少し上げる（赤・黄が出やすくなる）
-    canvas = ImageEnhance.Color(canvas).enhance(2.00)
+    canvas = ImageEnhance.Color(canvas).enhance(1.35)
     # 1.0 = 元
     # 1.15〜1.35 が安全圏
 

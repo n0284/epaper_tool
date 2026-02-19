@@ -114,6 +114,11 @@ def convert_to_epd_bin(input_image: Path, output_bin: Path) -> None:
     # cutoff: 黒点/白点の両端を何%捨てるか。小さめが安全（0.5〜2）
     canvas = ImageOps.autocontrast(canvas, cutoff=0.5)
 
+    # 彩度を少し上げる（赤・黄が出やすくなる）
+    canvas = ImageEnhance.Color(canvas).enhance(1.25)
+    # 1.0 = 元
+    # 1.15〜1.35 が安全圏
+
     # シャープはやりすぎると粒が硬くなるので 1.1〜1.3 くらいが無難
     canvas = ImageEnhance.Sharpness(canvas).enhance(1.1)
 

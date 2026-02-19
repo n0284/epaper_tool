@@ -59,7 +59,7 @@ def looks_like_skin(pixel):
     warm = (r > 70 and g > 55 and b < 170 and (r-g) < 90)
     return bright > 55 and warm
 
-def quantize_pixel(pixel, sat_threshold=42, red_diff=16):
+def quantize_pixel(pixel, sat_threshold=55, red_diff=28):
     if is_colorful(pixel, sat_threshold):
         if allow_red(pixel, diff=red_diff):
             # 赤を狙うなら黄を混ぜない（赤が黄に負けるのを防ぐ）
@@ -115,7 +115,7 @@ def convert_to_epd_bin(input_image: Path, output_bin: Path) -> None:
     canvas = ImageOps.autocontrast(canvas, cutoff=0.5)
 
     # 彩度を少し上げる（赤・黄が出やすくなる）
-    canvas = ImageEnhance.Color(canvas).enhance(1.35)
+    canvas = ImageEnhance.Color(canvas).enhance(1.25)
     # 1.0 = 元
     # 1.15〜1.35 が安全圏
 
